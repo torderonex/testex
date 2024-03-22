@@ -8,6 +8,8 @@ services:
       - 8080:8080
     depends_on:
       - db
+    environment:
+    - DB_PASSWORD=qwerty
 
   db:
     restart: always
@@ -16,3 +18,5 @@ services:
     - ./.database/postgres/data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=qwerty
