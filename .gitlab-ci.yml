@@ -13,7 +13,7 @@ stages:
 build:
   stage: build
   script:
-    - go build -o app ./cmd/app/main.go
+    - go build -o ./cmd/app/bin ./cmd/app/main.go
 
 test:
   stage: test
