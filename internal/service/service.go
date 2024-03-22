@@ -8,6 +8,8 @@ import (
 	"testex/internal/storage"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Service struct {
 	Command
 }

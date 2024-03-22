@@ -3,9 +3,9 @@ package entities
 import "os/exec"
 
 type Command struct {
-	Id     int
-	Alias  string
-	Script string
+	Id     int    `json:"id"`
+	Alias  string `json:"alias"`
+	Script string `json:"script"`
 }
 
 type ExecutedCommand struct {
@@ -16,9 +16,9 @@ type ExecutedCommand struct {
 }
 
 type Log struct {
-	Id                int    `db:"id"`
-	ExecutedCommandId int    `db:"executed_command_id"`
-	Message           string `db:"message"`
+	Id                int    `db:"id" json:"id"`
+	ExecutedCommandId int    `db:"executed_command_id" json:"executed_command_id"`
+	Message           string `db:"message" json:"message"`
 }
 
 type CommandInfo struct {

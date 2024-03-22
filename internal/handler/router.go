@@ -40,35 +40,25 @@ func (router Router) addCommand(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		var commandDto entities.CommandDto
 		if err := json.NewDecoder(r.Body).Decode(&commandDto); err != nil {
-			http.Error(w, "failed to parse request body", http.StatusBadRequest)
+			e := newError("failed to parse request body", http.StatusBadRequest)
+			http.Error(w, e.ToJson(), e.StatusCode)
 			return
 		}
 		defer r.Body.Close()
 		id, err := router.Service.Command.Create(commandDto.Alias, commandDto.Script)
 		if err != nil {
-			http.Error(w, "failed to add new command", http.StatusInternalServerError)
-			router.Logger.Error("failed to add new command", sl.Err(err))
+			e := newError("failed to add new command", http.StatusInternalServerError)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
 			return
 		}
-		w.WriteHeader(http.StatusCreated)
-		jsonResponse, err := json.Marshal(entities.CommandIDResponse{Id: id})
-		if err != nil {
-			http.Error(w, "failed to marshal response", http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
-		_, err = w.Write(jsonResponse)
-		if err != nil {
-			http.Error(w, "failed to write response", http.StatusInternalServerError)
-		}
+		sendJSONResponse(w, http.StatusCreated, entities.CommandIDResponse{Id: id})
 		return
 	case http.MethodOptions:
 		w.Header().Set("Allow", "GET, POST, OPTIONS")
 		w.WriteHeader(http.StatusNoContent)
 	default:
-		w.Header().Set("Allow", "GET, POST, OPTIONS")
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		methodNotAllowed(w)
 	}
 }
 
@@ -77,33 +67,27 @@ func (router Router) executeCommand(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		var commandDto entities.CommandDto
 		if err := json.NewDecoder(r.Body).Decode(&commandDto); err != nil {
-			http.Error(w, "failed to parse request body", http.StatusBadRequest)
+			e := newError("failed to parse request body", http.StatusBadRequest)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
 			return
 		}
 		defer r.Body.Close()
 		output, err := router.Service.Execute(commandDto.Alias)
 		if err != nil {
-			http.Error(w, "failed to execute command", http.StatusInternalServerError)
-			router.Logger.Error("failed to execute command", sl.Err(err))
+			e := newError("failed to execute command", http.StatusInternalServerError)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
 			return
 		}
-		w.Header().Set("Content-Type", "application/json")
-		resp := struct {
-			Id int `json:"id"`
-		}{output}
-		data, err := json.MarshalIndent(resp, " ", " ")
-		_, err = w.Write(data)
-		if err != nil {
-			http.Error(w, "failed to write response", http.StatusInternalServerError)
-		}
+		sendJSONResponse(w, http.StatusOK, entities.CommandIDResponse{Id: output})
 		return
 
 	case http.MethodOptions:
 		w.Header().Set("Allow", "GET, POST, OPTIONS")
 		w.WriteHeader(http.StatusNoContent)
 	default:
-		w.Header().Set("Allow", "GET, POST, OPTIONS")
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		methodNotAllowed(w)
 	}
 }
 
@@ -115,26 +99,17 @@ func (router Router) getCommand(w http.ResponseWriter, r *http.Request) {
 
 		command, err := router.Service.GetOne(alias)
 		if err != nil {
-			http.Error(w, "failed to get command", http.StatusInternalServerError)
-			router.Logger.Error("failed to get command", sl.Err(err))
+			e := newError("failed to get command", http.StatusInternalServerError)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
 			return
 		}
-		jsonResponse, err := json.Marshal(command)
-		if err != nil {
-			http.Error(w, "failed to marshal response", http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, err = w.Write(jsonResponse)
-		if err != nil {
-			http.Error(w, "failed to write response", http.StatusInternalServerError)
-		}
+		sendJSONResponse(w, http.StatusOK, command)
 	case http.MethodOptions:
 		w.Header().Set("Allow", "GET, POST, OPTIONS")
 		w.WriteHeader(http.StatusNoContent)
 	default:
-		w.Header().Set("Allow", "GET, POST, OPTIONS")
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		methodNotAllowed(w)
 	}
 }
 
@@ -143,26 +118,17 @@ func (router Router) getAllCommands(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		command, err := router.Service.GetAll()
 		if err != nil {
-			http.Error(w, "failed to get commands", http.StatusInternalServerError)
-			router.Logger.Error("failed to get commands", sl.Err(err))
+			e := newError("failed to get commands", http.StatusInternalServerError)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
 			return
 		}
-		jsonResponse, err := json.Marshal(command)
-		if err != nil {
-			http.Error(w, "failed to marshal response", http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, err = w.Write(jsonResponse)
-		if err != nil {
-			http.Error(w, "failed to write response", http.StatusInternalServerError)
-		}
+		sendJSONResponse(w, http.StatusOK, command)
 	case http.MethodOptions:
 		w.Header().Set("Allow", "GET, POST, OPTIONS")
 		w.WriteHeader(http.StatusNoContent)
 	default:
-		w.Header().Set("Allow", "GET, POST, OPTIONS")
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		methodNotAllowed(w)
 	}
 }
 
@@ -173,22 +139,24 @@ func (router Router) stopCommand(w http.ResponseWriter, r *http.Request) {
 			Id int `json:"id"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&idDto); err != nil {
-			http.Error(w, "failed to parse request body", http.StatusBadRequest)
+			e := newError("failed to parse request body", http.StatusBadRequest)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
 			return
 		}
 		defer r.Body.Close()
 		err := router.Service.StopCommand(idDto.Id)
 		if err != nil {
-			http.Error(w, "failed to stop command", http.StatusInternalServerError)
-			router.Logger.Error("failed to stop command", sl.Err(err))
+			e := newError("failed to stop command", http.StatusBadRequest)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
 			return
 		}
 	case http.MethodOptions:
 		w.Header().Set("Allow", "GET, POST, OPTIONS")
 		w.WriteHeader(http.StatusNoContent)
 	default:
-		w.Header().Set("Allow", "GET, POST, OPTIONS")
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		methodNotAllowed(w)
 	}
 }
 
@@ -199,24 +167,23 @@ func (router Router) getLogs(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		parsedId, err := strconv.Atoi(id)
 		if err != nil {
-			http.Error(w, "wrong id type", http.StatusInternalServerError)
-			router.Logger.Error("id parse to int failed", sl.Err(err))
+			e := newError("wrong id format", http.StatusBadRequest)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
 			return
 		}
 		logs, err := router.Service.Command.GetLogs(parsedId)
 		if err != nil {
-			http.Error(w, "failed to get logs", http.StatusInternalServerError)
-			router.Logger.Error("failed to get logs", sl.Err(err))
+			e := newError("failed to get logs", http.StatusInternalServerError)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
 			return
 		}
-		data, err := json.MarshalIndent(logs, " ", " ")
-		_, err = w.Write(data)
-
+		sendJSONResponse(w, http.StatusOK, logs)
 	case http.MethodOptions:
 		w.Header().Set("Allow", "GET, POST, OPTIONS")
 		w.WriteHeader(http.StatusNoContent)
 	default:
-		w.Header().Set("Allow", "GET, POST, OPTIONS")
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		methodNotAllowed(w)
 	}
 }
