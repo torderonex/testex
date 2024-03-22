@@ -17,7 +17,7 @@
 os: "win"
 ```
 
-# Инструкция по запуску
+## Инструкция по запуску
 
 1. Установите Docker, Docker-compose
 2. Соберите приложение при помощи:
@@ -32,9 +32,7 @@ make build && make run
 docker-compose build testex
 ```
 
-# API
-
-## Эндпоинты
+## API
 
 ### Add Command
 
