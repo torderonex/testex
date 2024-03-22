@@ -1,0 +1,11 @@
+env: "dev"
+os: "linux"
+postgres:
+  port: 5432
+  username: "postgres"
+  database: "postgres"
+  host: "db"
+  password: "qwerty"
+http_server:
+  port: "8080"
+  timeout: 4s
