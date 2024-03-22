@@ -1,0 +1,27 @@
+image: golang:latest
+
+variables:
+  GO111MODULE: "on"
+  GOPATH: "/go"
+  TEST_REPORT_DIR: "test-reports"
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - go build -o app ./cmd/app/main.go
+
+test:
+  stage: test
+  script:
+    - mkdir -p $TEST_REPORT_DIR
+    - go test -v -race ./... -coverprofile=$TEST_REPORT_DIR/coverage.out
+    - go tool cover -html=$TEST_REPORT_DIR/coverage.out -o $TEST_REPORT_DIR/coverage.html
+  artifacts:
+    paths:
+      - $TEST_REPORT_DIR/
+    expire_in: 1 week
