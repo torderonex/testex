@@ -33,6 +33,7 @@ func (router Router) initRoutes() {
 	router.Mux.HandleFunc("/commands/add", router.addCommand)
 	router.Mux.HandleFunc("/commands/stop", router.stopCommand)
 	router.Mux.HandleFunc("/commands/logs/{id}", router.getLogs)
+	router.Mux.HandleFunc("/commands/active", router.getActiveExecutedCommands)
 }
 
 func (router Router) addCommand(w http.ResponseWriter, r *http.Request) {
@@ -180,6 +181,25 @@ func (router Router) getLogs(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		sendJSONResponse(w, http.StatusOK, logs)
+	case http.MethodOptions:
+		w.Header().Set("Allow", "GET, POST, OPTIONS")
+		w.WriteHeader(http.StatusNoContent)
+	default:
+		methodNotAllowed(w)
+	}
+}
+
+func (router Router) getActiveExecutedCommands(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		command, err := router.Service.GetActiveExecutedCommand()
+		if err != nil {
+			e := newError("failed to get commands", http.StatusInternalServerError)
+			http.Error(w, e.ToJson(), e.StatusCode)
+			router.Logger.Error(e.Message, sl.Err(err))
+			return
+		}
+		sendJSONResponse(w, http.StatusOK, command)
 	case http.MethodOptions:
 		w.Header().Set("Allow", "GET, POST, OPTIONS")
 		w.WriteHeader(http.StatusNoContent)

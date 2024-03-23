@@ -41,6 +41,10 @@ func (c *Service) GetOne(alias string) (entities.Command, error) {
 	return c.Storage.GetCommand(alias)
 }
 
+func (c *Service) GetActiveExecutedCommand() ([]entities.ExecutedCommand, error) {
+	return c.Storage.GetActiveExecutedCommands()
+}
+
 func (c *Service) Execute(alias string) (int, error) {
 	ctx := context.Background()
 	var (

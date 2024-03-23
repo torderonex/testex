@@ -59,6 +59,13 @@ func (s CommandStorage) SaveExecutedCommand(ec entities.ExecutedCommand) (int, e
 	return id, nil
 }
 
+func (s CommandStorage) GetActiveExecutedCommands() ([]entities.ExecutedCommand, error) {
+	var c []entities.ExecutedCommand
+	query := fmt.Sprintf("SELECT * from %s WHERE is_active = true", ExecutedCommandsTable)
+	err := s.Db.Select(&c, query)
+	return c, err
+}
+
 func (s CommandStorage) FinishCommand(commandID int) error {
 	query := fmt.Sprintf("UPDATE %s SET is_active = $1 WHERE id = $2", ExecutedCommandsTable)
 	_, err := s.Db.Exec(query, false, commandID)

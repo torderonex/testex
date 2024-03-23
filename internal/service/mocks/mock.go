@@ -64,6 +64,21 @@ func (mr *MockCommandMockRecorder) Execute(alias interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockCommand)(nil).Execute), alias)
 }
 
+// GetActiveExecutedCommand mocks base method.
+func (m *MockCommand) GetActiveExecutedCommand() ([]entities.ExecutedCommand, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetActiveExecutedCommand")
+	ret0, _ := ret[0].([]entities.ExecutedCommand)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetActiveExecutedCommand indicates an expected call of GetActiveExecutedCommand.
+func (mr *MockCommandMockRecorder) GetActiveExecutedCommand() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActiveExecutedCommand", reflect.TypeOf((*MockCommand)(nil).GetActiveExecutedCommand))
+}
+
 // GetAll mocks base method.
 func (m *MockCommand) GetAll() ([]entities.Command, error) {
 	m.ctrl.T.Helper()

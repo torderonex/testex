@@ -25,6 +25,7 @@ type Command interface {
 	Create(alias string, script string) (int, error)
 	GetAll() ([]entities.Command, error)
 	GetOne(alias string) (entities.Command, error)
+	GetActiveExecutedCommand() ([]entities.ExecutedCommand, error)
 	StopCommand(id int) error
 	GetLogs(executedCommandId int) ([]entities.Log, error)
 }

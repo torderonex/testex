@@ -1,9 +1,10 @@
 package storage
 
 import (
-	"github.com/jmoiron/sqlx"
 	"testex/internal/entities"
 	"testex/internal/storage/postgres"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Storage struct {
@@ -19,6 +20,7 @@ type CommandRepository interface {
 	FinishCommand(commandID int) error
 	GetLogsByExecutedCommand(executedCommandID int) ([]entities.Log, error)
 	GetExecutedCommandById(id int) (entities.ExecutedCommand, error)
+	GetActiveExecutedCommands() ([]entities.ExecutedCommand, error)
 }
 
 func New(db *sqlx.DB) *Storage {

@@ -441,7 +441,7 @@ func TestRouter_getLogs(t *testing.T) {
 				r.EXPECT().GetLogs(id).Return(logs, err)
 			},
 			expectedStatusCode:   http.StatusOK,
-			expectedResponseBody: `[{"id":1,"executed_command_id":1,"message":"log1"},{"id":2,"executed_command_id":1,"message":"log2"},{"id":3,"executed_command_id":1,"message":"log3"}]`,
+			expectedResponseBody: `[{"id":1,"executed_command_id":1,"message":"log1","date":"0001-01-01T00:00:00Z"},{"id":2,"executed_command_id":1,"message":"log2","date":"0001-01-01T00:00:00Z"},{"id":3,"executed_command_id":1,"message":"log3","date":"0001-01-01T00:00:00Z"}]`,
 		},
 		{
 			name:          "GetLogs_BadRequest",

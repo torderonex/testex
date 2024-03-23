@@ -85,8 +85,8 @@ docker-compose build testex
 - **Description**: Возвращает логи исполняемой команды.
 - **URL Parameters**:
   - `id`: ID исполняемой команды.
-- **Response**: Array of log objects:
-  `[ {"id": "int", "message": "string", "executed_command_id" : "int" }, ... ]`
+- **Response**: Массив объектов логов:
+  `[ {"id": "int", "message": "string", "executed_command_id" : "int", "date" : "" }, ... ]`
 
 # Используемые технологии
 
