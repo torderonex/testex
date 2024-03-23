@@ -103,7 +103,9 @@ docker-compose build testex
 - Windows, Linux Ubuntu
 - Gitlab-CI
 - Make
-  Из сторонних пакетов Go использовались:
+
+Из сторонних пакетов Go использовались:
+
 - viper (для файлов конфигурации)
 - slqx, pq (для работы с Postgres)
 - testify (для удобного тестирования)
