@@ -9,7 +9,7 @@ import (
 	"testex/internal/storage"
 	"testex/internal/storage/postgres"
 	"testex/pkg/server"
-	"testex/pkg/slog"
+	sl "testex/pkg/slog"
 )
 
 const (
@@ -21,7 +21,7 @@ func main() {
 	cfg := config.MustLoad()
 	//logger init
 	logger := setupLogger(cfg.Env)
-	logger.Info("App is starting on port 8080", slog.String("Env", cfg.Env))
+	logger.Info("App is starting on port "+cfg.HTTPServer.Port, slog.String("Env", cfg.Env))
 
 	//pg init
 	db, err := postgres.New(cfg.Postgres)

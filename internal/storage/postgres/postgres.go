@@ -2,9 +2,10 @@ package postgres
 
 import (
 	"fmt"
+	"testex/internal/config"
+
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"testex/internal/config"
 )
 
 const (
@@ -63,6 +64,7 @@ func New(cfg config.PostgresDatabase) (*sqlx.DB, error) {
 		CREATE TABLE IF NOT EXISTS logs(
 			id SERIAL PRIMARY KEY,
 			executed_command_id INT REFERENCES executed_commands,
+			date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			message TEXT
 		);
 	`)

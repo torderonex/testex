@@ -38,7 +38,7 @@ docker-compose build testex
 
 - **URL**: `/commands/add`
 - **Method**: `POST`
-- **Description**: Добавляет новую команду.
+- **Description**: Добавляет новую команду. Вовращает id добавленной команды.
 - **Request Body**: `{ "alias": "string", "script": "string" }`
 - **Response**: `{ "id": 1 }`
 
@@ -46,7 +46,7 @@ docker-compose build testex
 
 - **URL**: `/commands/execute`
 - **Method**: `POST`
-- **Description**: Выполняет команду.
+- **Description**: Выполняет команду по псевдониму. Возвращает id выполняющейся команды.
 - **Request Body**:
   `{   "alias": "string" }`
 - **Response**:
@@ -58,7 +58,7 @@ docker-compose build testex
 - **Method**: `GET`
 - **Description**: Возвращает информацию о команде.
 - **URL Parameters**:
-  - `alias`: Alias of the command to retrieve
+  - `alias`: Псеводним для команды
 - **Response**:
   `{"id": "int", "alias": "string", "script": "string" }`
 
@@ -67,7 +67,7 @@ docker-compose build testex
 - **URL**: `/commands`
 - **Method**: `GET`
 - **Description**: Возвращает информацию обо всех командах.
-- **Response**: Array of command objects:
+- **Response**: Массив всех команд:
   `[{"id": "int","alias": "string", "script": "string" }, ... ]`
 
 ### Stop Command
@@ -84,7 +84,7 @@ docker-compose build testex
 - **Method**: `GET`
 - **Description**: Возвращает логи исполняемой команды.
 - **URL Parameters**:
-  - `id`: ID of the command to retrieve logs for
+  - `id`: ID исполняемой команды.
 - **Response**: Array of log objects:
   `[ {"id": "int", "message": "string", "executed_command_id" : "int" }, ... ]`
 

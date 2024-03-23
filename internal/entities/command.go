@@ -1,6 +1,9 @@
 package entities
 
-import "os/exec"
+import (
+	"os/exec"
+	"time"
+)
 
 type Command struct {
 	Id     int    `json:"id"`
@@ -16,9 +19,10 @@ type ExecutedCommand struct {
 }
 
 type Log struct {
-	Id                int    `db:"id" json:"id"`
-	ExecutedCommandId int    `db:"executed_command_id" json:"executed_command_id"`
-	Message           string `db:"message" json:"message"`
+	Id                int       `db:"id" json:"id"`
+	ExecutedCommandId int       `db:"executed_command_id" json:"executed_command_id"`
+	Message           string    `db:"message" json:"message"`
+	Date              time.Time `db:"date" json:"date"`
 }
 
 type CommandInfo struct {
