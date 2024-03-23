@@ -32,6 +32,7 @@ make build && make run
 
 ```bash
 docker-compose build testex
+docker-compose up testex
 ```
 
 ## API
